@@ -15,34 +15,38 @@ const app = express();
 dotenv.config();
 connectDB();
 
-app.get("/", (req, res)=>{
-    res.send("API is running!")
-});
+// app.get("/", (req, res)=>{
+//     res.send("API is running!")
+// });
 
 
 app.use(express.json()); // to accept json data
 
-// app.get("/", (req, res) => {
-//   res.send("API Running!");
-// });
+
 
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
+
+const __dirname1=path.resolve();
+if(process.env.NODE_ENV==="production"){
+  app.use(express.static(path.join(__dirname1,"/chat/build")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname1, "chat", "build", "index.html"))
+  );
+}else{
+  app.get("/", (req, res) => {
+  res.send("API Running!");
+});
+}
 
 // Error Handling middlewares
 app.use(notFound);
 app.use(errorHandler);
 
 
-// app.get("/api/chats", (req, res)=>{
-//     res.send(chats);
-// });
 
-// app.get("/api/chats/:id", (req, res)=>{
-//     const singleChat=chats.find((c)=> c._id === req.params.id);
-//     res.send(singleChat);
-// });
 
 
 
